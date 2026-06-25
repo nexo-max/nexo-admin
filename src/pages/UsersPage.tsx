@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../api/client'
 import { formatDate, timeAgo } from '../lib/utils'
-import { Search, Shield, ShieldOff, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, Shield, ShieldOff, Trash2, ChevronLeft, ChevronRight, UserCheck, UserX } from 'lucide-react'
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'Wszyscy' },
@@ -45,6 +45,12 @@ export default function UsersPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => adminApi.deleteUser(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-users'] }),
+  })
+
+  const moderatorMutation = useMutation({
+    mutationFn: ({ id, grant }: { id: string; grant: boolean }) =>
+      adminApi.setModerator(id, grant),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-users'] }),
   })
 
@@ -141,6 +147,11 @@ export default function UsersPage() {
                           Admin
                         </span>
                       )}
+                      {user.isModerator && !user.isAdmin && (
+                        <span className="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-400 font-medium">
+                          Moderator
+                        </span>
+                      )}
                       {user.isBlocked && (
                         <span className="px-2 py-0.5 rounded-full text-xs bg-destructive/20 text-destructive font-medium">
                           Zablokowany
@@ -168,6 +179,17 @@ export default function UsersPage() {
                     <div className="flex items-center justify-end gap-2">
                       {!user.isAdmin && (
                         <>
+                          <button
+                            onClick={() => moderatorMutation.mutate({ id: user.id, grant: !user.isModerator })}
+                            title={user.isModerator ? 'Odbierz rolę moderatora' : 'Nadaj rolę moderatora'}
+                            className={`p-2 rounded-lg transition-colors ${
+                              user.isModerator
+                                ? 'text-blue-400 hover:text-blue-300 hover:bg-blue-400/10'
+                                : 'text-muted-foreground hover:text-blue-400 hover:bg-blue-400/10'
+                            }`}
+                          >
+                            {user.isModerator ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
+                          </button>
                           {user.isBlocked ? (
                             <button
                               onClick={() => unblockMutation.mutate(user.id)}

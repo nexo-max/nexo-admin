@@ -55,7 +55,7 @@ export default function LoginPage() {
               required
               autoComplete="email"
               className="w-full bg-input border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="admin@nexo.zachowice.eu"
+              placeholder="nexo@zachowice.eu"
             />
           </div>
 

@@ -40,6 +40,8 @@ export const adminApi = {
     api.patch(`/admin/users/${id}/block`, { reason }),
   unblockUser: (id: string) => api.patch(`/admin/users/${id}/unblock`),
   deleteUser: (id: string) => api.delete(`/admin/users/${id}`),
+  setModerator: (id: string, grant: boolean) =>
+    api.patch(`/admin/users/${id}/moderator`, { grant }),
   getPendingPhotos: (params?: Record<string, string>) =>
     api.get('/admin/photos/pending', { params }),
   approvePhoto: (id: string) => api.patch(`/admin/photos/${id}/approve`),
